@@ -45,23 +45,6 @@ public class TareasDAO {
         return listaTareas;
     }
     
-    public Tareas listarId(int id){
-        Tareas ta = new Tareas();
-        String sql="SELECT * FROM tb_tarea WHERE id="+id;
-        try {
-            con=cn.conexion();
-            ps=con.prepareStatement(sql);
-            rs=ps.executeQuery();
-            while (rs.next()) {                
-                ta.setId(rs.getInt("id"));
-                ta.setTarea(rs.getString("tarea"));
-                ta.setCompletado(rs.getString("completado"));
-            }
-        } catch (Exception e) {
-        }
-        
-        return ta;
-    }
     public void agregar(Tareas tarea) {
         String sql="INSERT INTO tb_tarea (tarea) VALUES (?);";
         try {
