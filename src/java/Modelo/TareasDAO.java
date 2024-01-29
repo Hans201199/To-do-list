@@ -57,22 +57,25 @@ public class TareasDAO {
         }       
     }
     
-    public void eliminar (int id) {
-        String sql="DELETE FROM tb_tarea WHERE id ="+id;
+    public void eliminar (Tareas tarea) {
+        String sql="DELETE FROM tb_tarea WHERE id = (?);";
         try {
             con=cn.conexion();
             ps=con.prepareStatement(sql);
+            ps.setInt(1, tarea.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
     
-    public void actualizar(int id, String t_check) {
-        String sql="UPDATE tb_tarea SET completado="+t_check+ " WHERE id ="+id;
+    public void actualizar(Tareas tarea) {
+        String sql="UPDATE tb_tarea SET completado=(?) WHERE id =(?);";
         try {
             con=cn.conexion();           
             ps=con.prepareStatement(sql);
+            ps.setString(1, tarea.getCompletado());
+            ps.setInt(2, tarea.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

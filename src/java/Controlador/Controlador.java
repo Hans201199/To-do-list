@@ -53,12 +53,15 @@ public class Controlador extends HttpServlet {
                 ide=Integer.parseInt(request.getParameter("id"));
                 String t_check=request.getParameter("tarea_check");         
                 t_check = "0".equals(t_check) ? "1" : "0";               
-                tdao.actualizar(ide, t_check);
+                nuevaTarea.setCompletado(t_check);
+                nuevaTarea.setId(ide);
+                tdao.actualizar(nuevaTarea);
                 request.getRequestDispatcher("/Controlador?accion=listar").forward(request, response);
                 break;
             case "eliminar":
                 ide=Integer.parseInt(request.getParameter("id"));
-                tdao.eliminar(ide);               
+                nuevaTarea.setId(ide);
+                tdao.eliminar(nuevaTarea);               
                 request.getRequestDispatcher("/Controlador?accion=listar").forward(request, response);
                 break;
             default:
