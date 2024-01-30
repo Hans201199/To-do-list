@@ -34,7 +34,7 @@
                             <input type="text" class="form-control" placeholder="Escriba su tarea" name="tarea" id="tarea" aria-describedby="helpId">
                             <br/>
                             <input class="btn btn-primary" type="submit" name="agregar_tarea" id="agregar_tarea" value="Agregar tarea">   
-                            <div class="alert alert-${tipo}" role="alert" ${tipo!=null?'' : 'hidden'}>
+                            <div class="alert alert-${visibilidad}" role="alert" ${visibilidad!=null?'' : 'hidden'}>
                                 ${mensaje}
                             </div>
                         </form>

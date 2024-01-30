@@ -46,17 +46,17 @@ public class Controlador extends HttpServlet {
                 break;
             case "agregar":                
                 String tarea=request.getParameter("tarea");               
-                String txt=null;
                 String msj=null;
+                String vis=null;
                 if (tarea != null && !tarea.trim().isEmpty()) {
                     nuevaTarea.setTarea(tarea);
                     tdao.agregar(nuevaTarea);  
                 } else {
-                    msj="danger";
-                    txt="No ingreso la tarea";
+                    vis="danger";
+                    msj="No ingreso la tarea";
                 }
-                request.setAttribute("tipo", msj);
-                request.setAttribute("mensaje", txt);
+                request.setAttribute("visibilidad", vis);
+                request.setAttribute("mensaje", msj);
                 request.getRequestDispatcher("/Controlador?accion=listar").forward(request, response);
                 break;
             case "actualizar":
