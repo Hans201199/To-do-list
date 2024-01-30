@@ -7,6 +7,7 @@ package Controlador;
 
 import Modelo.Tareas;
 import Modelo.TareasDAO;
+import com.mysql.jdbc.SQLError;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -43,10 +44,19 @@ public class Controlador extends HttpServlet {
                 request.setAttribute("listado", lista);
                 request.getRequestDispatcher("index.jsp").forward(request, response);
                 break;
-            case "agregar":
-                String tarea=request.getParameter("tarea");
-                nuevaTarea.setTarea(tarea);
-                tdao.agregar(nuevaTarea);
+            case "agregar":                
+                String tarea=request.getParameter("tarea");               
+                String txt=null;
+                String msj=null;
+                if (tarea != null && !tarea.trim().isEmpty()) {
+                    nuevaTarea.setTarea(tarea);
+                    tdao.agregar(nuevaTarea);  
+                } else {
+                    msj="danger";
+                    txt="No ingreso la tarea";
+                }
+                request.setAttribute("tipo", msj);
+                request.setAttribute("mensaje", txt);
                 request.getRequestDispatcher("/Controlador?accion=listar").forward(request, response);
                 break;
             case "actualizar":

@@ -33,7 +33,10 @@
                             <label class="form-label">Tarea:</label>
                             <input type="text" class="form-control" placeholder="Escriba su tarea" name="tarea" id="tarea" aria-describedby="helpId">
                             <br/>
-                            <input class="btn btn-primary" type="submit" name="agregar_tarea" id="agregar_tarea" value="Agregar tarea">
+                            <input class="btn btn-primary" type="submit" name="agregar_tarea" id="agregar_tarea" value="Agregar tarea">   
+                            <div class="alert alert-${tipo}" role="alert" ${tipo!=null?'' : 'hidden'}>
+                                ${mensaje}
+                            </div>
                         </form>
                     </div>
                    
@@ -54,8 +57,7 @@
                                     <input type="hidden" name="id" value="${l.getId()}" >
                                     &nbsp;&nbsp;<input class="btn btn-danger btn-sm" type="submit" name="eliminar_tarea" id="eliminar_tarea" value="X">
                                 </form>
-                            </li>
-                            
+                            </li>                            
                         </c:forEach>
                     </ul>                   
                     
