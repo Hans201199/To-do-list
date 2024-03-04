@@ -9,7 +9,10 @@ import Modelo.Tareas;
 import Modelo.TareasDAO;
 import com.mysql.jdbc.SQLError;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -21,63 +24,70 @@ import javax.servlet.http.HttpServletResponse;
  */
 
 public class Controlador extends HttpServlet {
-    Tareas nuevaTarea = new Tareas(); 
-    TareasDAO tdao=new TareasDAO();
+
+    Tareas nuevaTarea = new Tareas();
+    TareasDAO tdao = new TareasDAO();
     int ide;
-    
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *"
+     * methods. "
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
+     * @throws java.sql.SQLException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");    
-        String accion=request.getParameter("accion");     
+            throws ServletException, IOException, SQLException {
+        response.setContentType("text/html;charset=UTF-8");
+        String accion = request.getParameter("accion");
         switch (accion) {
             case "listar":
-                List<Tareas> lista=tdao.cargar();
+                List<Tareas> lista = tdao.cargar();
                 request.setAttribute("listado", lista);
                 request.getRequestDispatcher("index.jsp").forward(request, response);
                 break;
-            case "agregar":                
-                String tarea=request.getParameter("tarea");               
-                String msj=null;
-                String vis=null;
-                if (tarea != null && !tarea.trim().isEmpty()) {
+            case "agregar":
+                String tarea = request.getParameter("tarea");
+                String msj = null;
+                String vis = null;
+                if (tarea != null && !tarea.trim().isEmpty()) {                                      
                     nuevaTarea.setTarea(tarea);
-                    tdao.agregar(nuevaTarea);  
+                    if (!tdao.duplicadoCurso(nuevaTarea)) {
+                        tdao.agregar(nuevaTarea); 
+                    } else {
+                        vis = "danger";
+                        msj = "El curso ya existe";
+                    }                                                       
                 } else {
-                    vis="danger";
-                    msj="No ingreso la tarea";
+                    vis = "danger";
+                    msj = "No ingreso la tarea";
                 }
                 request.setAttribute("visibilidad", vis);
                 request.setAttribute("mensaje", msj);
                 request.getRequestDispatcher("/Controlador?accion=listar").forward(request, response);
                 break;
             case "actualizar":
-                ide=Integer.parseInt(request.getParameter("id"));
-                String t_check=request.getParameter("tarea_check");         
-                t_check = "0".equals(t_check) ? "1" : "0";               
+                ide = Integer.parseInt(request.getParameter("id"));
+                String t_check = request.getParameter("tarea_check");
+                t_check = "0".equals(t_check) ? "1" : "0";
                 nuevaTarea.setCompletado(t_check);
                 nuevaTarea.setId(ide);
                 tdao.actualizar(nuevaTarea);
                 request.getRequestDispatcher("/Controlador?accion=listar").forward(request, response);
                 break;
             case "eliminar":
-                ide=Integer.parseInt(request.getParameter("id"));
+                ide = Integer.parseInt(request.getParameter("id"));
                 nuevaTarea.setId(ide);
-                tdao.eliminar(nuevaTarea);               
+                tdao.eliminar(nuevaTarea);
                 request.getRequestDispatcher("/Controlador?accion=listar").forward(request, response);
                 break;
             default:
                 throw new AssertionError();
         }
-                   
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -92,7 +102,11 @@ public class Controlador extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -106,7 +120,11 @@ public class Controlador extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

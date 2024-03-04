@@ -9,7 +9,6 @@ package Modelo;
  *
  * @author hanss
  */
-
 import config.Conexion;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,24 +18,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TareasDAO {
-    Conexion cn=new Conexion();
+
+    Conexion cn = new Conexion();
     Connection con;
     PreparedStatement ps;
     ResultSet rs;
-    
-    public List cargar(){
-        List listaTareas = new ArrayList();       
-        String sql="SELECT * FROM tb_tarea";
+
+    public List cargar() {
+        List listaTareas = new ArrayList();
+        String sql = "SELECT * FROM tb_tarea";
         try {
-            con=cn.conexion();
-            ps=con.prepareStatement(sql);
-            rs=ps.executeQuery();
+            con = cn.conexion();
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
             while (rs.next()) {
-                Tareas ta=new Tareas();
+                Tareas ta = new Tareas();
                 ta.setId(rs.getInt("id"));
                 ta.setTarea(rs.getString("tarea"));
                 ta.setCompletado(rs.getString("completado"));
-                
+
                 listaTareas.add(ta);
             }
         } catch (SQLException e) {
@@ -44,42 +44,58 @@ public class TareasDAO {
         }
         return listaTareas;
     }
-    
+
     public void agregar(Tareas tarea) {
-        String sql="INSERT INTO tb_tarea (tarea) VALUES (?);";
+        String sql = "INSERT INTO tb_tarea (tarea) VALUES (?);";
         try {
-            con=cn.conexion();           
-            ps=con.prepareStatement(sql);
+            con = cn.conexion();
+            ps = con.prepareStatement(sql);
             ps.setString(1, tarea.getTarea());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-        }       
+        }
     }
-    
-    public void eliminar (Tareas tarea) {
-        String sql="DELETE FROM tb_tarea WHERE id = (?);";
+
+    public boolean duplicadoCurso(Tareas tarea) throws SQLException {
+        String sql = "SELECT COUNT(*) AS curso FROM tb_tarea WHERE tarea = (?);";
         try {
-            con=cn.conexion();
-            ps=con.prepareStatement(sql);
+            con = cn.conexion();
+            ps = con.prepareStatement(sql);
+            ps.setString(1, tarea.getTarea());
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("curso") > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    public void eliminar(Tareas tarea) {
+        String sql = "DELETE FROM tb_tarea WHERE id = (?);";
+        try {
+            con = cn.conexion();
+            ps = con.prepareStatement(sql);
             ps.setInt(1, tarea.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    
+
     public void actualizar(Tareas tarea) {
-        String sql="UPDATE tb_tarea SET completado=(?) WHERE id =(?);";
+        String sql = "UPDATE tb_tarea SET completado=(?) WHERE id =(?);";
         try {
-            con=cn.conexion();           
-            ps=con.prepareStatement(sql);
+            con = cn.conexion();
+            ps = con.prepareStatement(sql);
             ps.setString(1, tarea.getCompletado());
             ps.setInt(2, tarea.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-        }       
+        }
     }
-    
+
 }
